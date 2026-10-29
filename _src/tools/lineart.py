@@ -3,6 +3,7 @@
   assets/img/lineart-site.svg   pencil-sketch panorama: skyline of frames/scaffolds/tower cranes (back),
                                 plant & machinery (middle), materials and fencing (front)
   assets/img/lineart-tools.svg  row of outlined construction tool icons with soft brand-colour offset fills
+  assets/img/pat-*.svg          corner motifs for the How-we-deliver cards (survey, structural grid, gauge)
 
 Usage: python _src/tools/lineart.py
 Every stroke is jittered and drawn twice at different weights to read as pencil, not vector.
@@ -456,8 +457,70 @@ def tools_svg():
             f'stroke-linecap="round" stroke-linejoin="round">{body}</svg>')
 
 
+# =============================================================================
+# CARD CORNER MOTIFS (How we deliver): white strokes, opacity set in CSS
+# =============================================================================
+def _svg(body):
+    return ('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 260" width="260" height="260" fill="none" '
+            'stroke="#fff" stroke-linecap="round" stroke-linejoin="round" font-family="monospace" font-size="8">' + body + '</svg>')
+
+
+def pat_plan():
+    """Topographic survey: contour rings, spot heights, benchmark."""
+    cx, cy, out = 205, 52, []
+    for k in range(9):
+        rk = 14 + k * 17
+        pts = []
+        for i in range(73):
+            t = i / 72 * 2 * math.pi
+            r = rk * (1 + .13 * math.sin(3 * t + k * .55) + .07 * math.cos(5 * t - k * .9))
+            pts.append(f'{cx + r * math.cos(t):.1f},{cy + r * math.sin(t) * .86:.1f}')
+        dash = ' stroke-dasharray="3 4"' if k % 4 == 3 else ''
+        out.append(f'<polyline points="{" ".join(pts)}" stroke-width="{1.3 if k % 4 == 0 else .8}"{dash}/>')
+    out.append(f'<circle cx="{cx}" cy="{cy}" r="4"/><path d="M{cx - 11} {cy}h22M{cx} {cy - 11}v22"/>')
+    for x, y, lbl in ((150, 96, '1482'), (96, 40, '1476'), (176, 150, '1470')):
+        out.append(f'<path d="M{x - 3} {y - 3}l6 6M{x + 3} {y - 3}l-6 6"/><text x="{x + 6}" y="{y + 3}" fill="#fff" stroke="none">{lbl}</text>')
+    return _svg(''.join(out))
+
+
+def pat_build():
+    """Structural gridlines with bubbles, columns, dimension line and a hatched opening."""
+    xs, ys, out = (96, 156, 216), (70, 130, 190), []
+    for i, x in enumerate(xs):
+        out.append(f'<path d="M{x} 30V250" stroke-dasharray="10 4 2 4"/><circle cx="{x}" cy="20" r="9"/>'
+                   f'<text x="{x - 2.6}" y="23" fill="#fff" stroke="none">{"ABC"[i]}</text>')
+    for i, y in enumerate(ys):
+        out.append(f'<path d="M40 {y}H246" stroke-dasharray="10 4 2 4"/><circle cx="252" cy="{y}" r="7" transform="translate(-6 0)"/>'
+                   f'<text x="243.6" y="{y + 3}" fill="#fff" stroke="none">{i + 1}</text>')
+    for x in xs:
+        for y in ys:
+            out.append(f'<rect x="{x - 5}" y="{y - 5}" width="10" height="10" fill="#fff" fill-opacity=".5"/>')
+    out.append('<path d="M96 46H156M96 42v8M156 42v8M93 49l6-6M153 49l6-6" stroke-width=".8"/><text x="113" y="40" fill="#fff" stroke="none">6000</text>')
+    hatch = ''.join(f'<path d="M{164 + k * 7} 122l-{min(k * 7, 44)} {min(k * 7, 44)}"/>' for k in range(1, 7))
+    out.append(f'<rect x="164" y="78" width="44" height="44" stroke-width=".8"/><g stroke-width=".6">{hatch}</g>')
+    return _svg(''.join(out))
+
+
+def pat_deliver():
+    """Progress gauge: tick ring, arcs, needle and completion arc."""
+    cx, cy, out = 214, 46, []
+    for i in range(72):
+        a = math.radians(i * 5)
+        r1, r2 = (100, 112) if i % 6 == 0 else (104, 110)
+        out.append(f'<path d="M{cx + r1 * math.cos(a):.1f} {cy + r1 * math.sin(a):.1f}L{cx + r2 * math.cos(a):.1f} {cy + r2 * math.sin(a):.1f}" stroke-width="{1.2 if i % 6 == 0 else .7}"/>')
+    for r, w, dash in ((40, 1, ''), (64, .8, ''), (86, 1.6, ' stroke-dasharray="2 5"')):
+        out.append(f'<circle cx="{cx}" cy="{cy}" r="{r}" stroke-width="{w}"{dash}/>')
+    a0, a1 = math.radians(95), math.radians(200)
+    out.append(f'<path d="M{cx + 74 * math.cos(a0):.1f} {cy + 74 * math.sin(a0):.1f}A74 74 0 0 1 {cx + 74 * math.cos(a1):.1f} {cy + 74 * math.sin(a1):.1f}" stroke-width="4" stroke-opacity=".6"/>')
+    na = math.radians(150)
+    out.append(f'<path d="M{cx} {cy}L{cx + 92 * math.cos(na):.1f} {cy + 92 * math.sin(na):.1f}" stroke-width="1.4"/><circle cx="{cx}" cy="{cy}" r="5" fill="#fff" fill-opacity=".6"/>')
+    out.append(f'<path d="M{cx - 30} {cy + 4}l6 6 12-14" stroke-width="1.4"/>')
+    return _svg(''.join(out))
+
+
 if __name__ == '__main__':
-    for name, fn in (('lineart-site.svg', site_svg), ('lineart-tools.svg', tools_svg)):
+    for name, fn in (('lineart-site.svg', site_svg), ('lineart-tools.svg', tools_svg),
+                     ('pat-plan.svg', pat_plan), ('pat-build.svg', pat_build), ('pat-deliver.svg', pat_deliver)):
         p = os.path.join(OUT, name)
         open(p, 'w', encoding='utf8').write(fn())
         print(name, os.path.getsize(p) // 1024, 'KB')
