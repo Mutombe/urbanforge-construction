@@ -5,7 +5,7 @@ Tokens:
   {{head:Title|Description}}   <head> block
   {{header:page}}              sprite + preloader + header + drawer (page = home|about|services|projects|contact)
   {{footer}}                   footer, to-top button and scripts
-  {{lineart}}                  construction skyline line drawing
+  {{lineart}}                  placeholder; the line-art strips are CSS backgrounds (see _src/tools/lineart.py)
   {{art:NAME}}                 industry shape for shape cards (ibeam|arches|pipe|blocks|truss|bricks)
   {{zwmap}}                    Zimbabwe operations map
 Run:  python _src/build.py
@@ -174,33 +174,6 @@ FOOTER = """<footer class="footer">
 <button class="to-top" type="button" aria-label="Back to top"><svg viewBox="0 0 54 54" aria-hidden="true"><circle cx="27" cy="27" r="24"/></svg><i><svg style="position:static;transform:none;width:16px;height:16px"><use href="#i-up"/></svg></i></button>
 <script src="assets/js/main.js" defer></script>"""
 
-# construction skyline drawn in single-weight lines (cranes, frames, excavator, tower)
-LINEART = """<svg viewBox="0 0 1440 260" preserveAspectRatio="xMidYMax slice" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" aria-hidden="true">
-  <path d="M0 252h1440"/>
-  <!-- tower crane left -->
-  <path d="M120 252V40m10 212V40M120 40h10M120 60l10-20M120 80l10-20M120 100l10-20M120 120l10-20M120 140l10-20M120 160l10-20M120 180l10-20M120 200l10-20M120 220l10-20M120 240l10-20"/>
-  <path d="M60 40h300M60 30h300M125 40V10M125 10 60 30m65-20 235 20M90 30v10m30-10v10m40-10v10m40-10v10m40-10v10m40-10v10m40-10v10m40-10v10"/>
-  <path d="M300 40v90m-8 0h16v14h-16zM62 40v24h30V40"/>
-  <!-- building frame under construction -->
-  <path d="M190 252V130h160v122M190 160h160M190 190h160M190 220h160M230 130v122M270 130v122M310 130v122M190 130l40 30m0-30 40 30m0-30 40 30m0-30 40 30"/>
-  <!-- finished tower -->
-  <path d="M420 252V70h90v182M420 90h90M440 110h12m14 0h12m14 0h12M440 135h12m14 0h12m14 0h12M440 160h12m14 0h12m14 0h12M440 185h12m14 0h12m14 0h12M440 210h12m14 0h12m14 0h12M455 252v-22h20v22"/>
-  <!-- excavator -->
-  <path d="M580 252h120M590 252a14 14 0 0 1 0-28h100a14 14 0 0 1 0 28M600 224v-34h50l14 34M612 196h26v18h-26zM664 200l40-50 36 30M740 180l8 30-22 6"/>
-  <!-- low rise + scaffold -->
-  <path d="M780 252V150h140v102M780 150l70-40 70 40M800 175h22v22h-22zm40 0h22v22h-22zm40 0h22v22h-22zM835 252v-36h30v36"/>
-  <path d="M930 252V120m40 132V120m-40 20h40m-40 30h40m-40 30h40m-40 30h40M930 140l40 30m-40 0 40 30m-40 0 40 30"/>
-  <!-- tower crane right -->
-  <path d="M1110 252V30m12 222V30M1110 30h12M1110 50l12-20M1110 70l12-20M1110 90l12-20M1110 110l12-20M1110 130l12-20M1110 150l12-20M1110 170l12-20M1110 190l12-20M1110 210l12-20M1110 230l12-20"/>
-  <path d="M990 30h380M990 20h380M1116 30V0M1116 0 990 20m126-20 254 20M1300 30v70m-8 0h16v14h-16z"/>
-  <!-- mid rise -->
-  <path d="M1180 252V110h120v142M1180 130h120M1180 160h120M1180 190h120M1180 220h120M1210 110v142M1240 110v142M1270 110v142"/>
-  <path d="M1320 252V170h100v82M1340 190h20v20h-20zm40 0h20v20h-20zM1355 252v-26h30v26"/>
-  <!-- traffic cones -->
-  <path d="M560 252l8-26 8 26m-12-12h8M730 252l8-26 8 26m-12-12h8"/>
-</svg>"""
-
-
 def art(kind):
     """Industry shapes for shape cards (Teamway-style), monochrome gradients tinted by --ink-tone."""
     u = next(_uid)
@@ -267,7 +240,7 @@ def build():
         src = re.sub(r'\{\{head:([^|}]+)\|([^}]+)\}\}', lambda m: head(m.group(1), m.group(2)), src)
         src = re.sub(r'\{\{header:(\w+)\}\}', lambda m: header(m.group(1)), src)
         src = re.sub(r'\{\{art:(\w+)\}\}', lambda m: art(m.group(1)), src)
-        src = src.replace('{{footer}}', FOOTER).replace('{{lineart}}', LINEART).replace('{{zwmap}}', ZWMAP)
+        src = src.replace('{{footer}}', FOOTER).replace('{{lineart}}', '').replace('{{zwmap}}', ZWMAP)
         left = re.findall(r'\{\{[^}]+\}\}', src)
         assert not left, f'{fn}: unresolved tokens {left}'
         open(os.path.join(ROOT, fn), 'w', encoding='utf8', newline='\n').write(src)

@@ -329,8 +329,10 @@ ul { margin: 0; padding: 0; list-style: none; }
 
 /* ---------- DIFFERENT (bento) ---------- */
 .diff { background: var(--paper); border-radius: var(--radius-xl) var(--radius-xl) 0 0; overflow: hidden; }
-.diff__lineart { position: absolute; left: 0; right: 0; bottom: 0; height: 260px; color: var(--steel-300); opacity: .9; pointer-events: none; }
-.diff__lineart svg { width: 100%; height: 100%; }
+.diff__lineart { --h: 360px; position: absolute; left: 0; right: 0; bottom: 0; height: var(--h); pointer-events: none; opacity: .95;
+  background: url(../img/lineart-site.svg) repeat-x 0 100% / auto 100%; animation: pan-site 180s linear infinite;
+  -webkit-mask-image: linear-gradient(180deg, transparent, #000 42%); mask-image: linear-gradient(180deg, transparent, #000 42%); }
+@keyframes pan-site { to { background-position-x: calc(var(--h) * -1800 / 340); } }
 .bento { position: relative; z-index: 1; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: auto auto; gap: 22px; max-width: 1040px; margin: 0 auto; }
 .bento__img { border-radius: var(--radius); overflow: hidden; position: relative; box-shadow: var(--shadow); }
 .bento__img img { width: 100%; height: 100%; object-fit: cover; }
@@ -512,8 +514,9 @@ ul { margin: 0; padding: 0; list-style: none; }
 .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--forge); box-shadow: 0 0 0 4px var(--forge-50); }
 .form__foot { grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap; margin-top: 8px; font-size: .85rem; color: var(--ink-2); }
 .form__status { grid-column: 1 / -1; font-size: .9rem; color: var(--navy); font-weight: 600; min-height: 1.2em; }
-.contact__lineart { position: absolute; left: 0; right: 0; bottom: 0; height: 200px; color: var(--steel-300); opacity: .7; pointer-events: none; }
-.contact__lineart svg { width: 100%; height: 100%; }
+.contact__lineart { position: absolute; left: 0; right: 0; bottom: 0; height: 220px; pointer-events: none; opacity: .9;
+  background: url(../img/lineart-tools.svg) repeat-x 0 100% / auto 100%;
+  -webkit-mask-image: linear-gradient(180deg, transparent, #000 38%); mask-image: linear-gradient(180deg, transparent, #000 38%); }
 
 /* ---------- INSIGHTS ---------- */
 .insights { display: grid; grid-template-columns: repeat(3, 1fr); border: 1px solid var(--steel-300); border-radius: var(--radius-lg); overflow: hidden; }
@@ -870,6 +873,8 @@ ul { margin: 0; padding: 0; list-style: none; }
   .split__media { margin-bottom: 40px; }
 }
 @media (max-width: 680px) {
+  .diff__lineart { --h: 230px; }
+  .contact__lineart { height: 150px; }
   .section::before { display: none; }
   .hero__social { flex-direction: row; top: 92px; left: auto; right: var(--gutter); transform: none; gap: 4px; }
   .hero__social::after { display: none; }
